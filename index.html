@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: system-ui, sans-serif;
+      font-size: 1.2rem;
+    }
+
+    .container {
+      width: 80dvw;
+      inline-size: 80dvw;
+      margin-inline: auto;
+    }
+
+    iframe {
+      margin-block-end: 4rem;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="container">
+    <h1>Using the Page Visibility API</h1>
+
+    <p><strong>Instructions</strong>:</p>
+
+    <ul>
+      <li>Play a video</li>
+      <li>Navigate away from the tab. <strong>The video should pause</strong></li>
+      <li>Navigate back to the tab. <strong>The video you were playing should start playing again</strong></li>
+    </ul>
+
+    <div>
+      <iframe class="youtube-video" width="560" height="315"
+        src="https://www.youtube.com/embed/su6urM6Li5k?enablejsapi=1" frameborder="0"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+        allowfullscreen></iframe>
+    </div>
+
+    <div>
+      <iframe class="youtube-video" width="560" height="315"
+        src="https://www.youtube.com/embed/PpvLye7fOT4?enablejsapi=1" frameborder="0"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+        allowfullscreen></iframe>
+    </div>
+
+    <div>
+      <iframe class="youtube-video" width="560" height="315"
+        src="https://www.youtube.com/embed/7XwBGpaIMH8?enablejsapi=1" frameborder="0"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+        allowfullscreen></iframe>
+    </div>
+
+    <div>
+      <iframe class="youtube-video" width="560" height="315"
+        src="https://www.youtube.com/embed/dQw4w9WgXcQ?enablejsapi=1" frameborder="0"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+        allowfullscreen></iframe>
+    </div>
+  </div>
+
+
+  <script>
+    let players = [];
+    let lastPlaying = null;
+  
+    function onYouTubeIframeAPIReady() {
+      const videoFrames = document.querySelectorAll('.youtube-video');
+  
+      videoFrames.forEach((frame) => {
+        const player = new YT.Player(frame, {
+          events: {
+            'onStateChange': onPlayerStateChange
+          }
+        });
+        players.push(player);
+      });
+    }
+  
+    function onPlayerStateChange(event) {
+      if (YT.PlayerState.PLAYING) {
+        if (lastPlaying) {
+          lastPlaying.pauseVideo();
+        }
+        lastPlaying = event.target;
+      } else if (YT.PlayerState.PAUSED) {
+        if (lastPlaying === event.target) {
+          lastPlaying = null;
+        }
+      }
+    }
+  
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden) {
+        if (lastPlaying) {
+          lastPlaying.pauseVideo();
+        }
+      } else {
+        if (lastPlaying) {
+          lastPlaying.playVideo();
+        }
+      }
+    });
+  
+    // Load YouTube IFrame API asynchronously
+    var tag = document.createElement('script');
+    tag.src = "https://www.youtube.com/iframe_api";
+    var firstScriptTag = document.getElementsByTagName('script')[0];
+    firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+  </script>
+  
+</body>
+
+</html>
